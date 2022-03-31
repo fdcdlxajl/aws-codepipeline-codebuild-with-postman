@@ -1,0 +1,2285 @@
+{
+	"info": {
+		"_postman_id": "f9deea8f-2a7a-4dd1-b543-9319ebea38dc",
+		"name": "AWS FIUAT Suite",
+		"description": "API calls using Redis as a datastore. Works in congruence with SQL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Security Token REDIS Unsuccessful",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"api_endpoint\", \"ops-portal-qa.cl.local\");\r",
+							"pm.globals.set(\"SCID\", \"source_-12345\")"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/token?SourceCustomerId=source_-7777777",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"token"
+					],
+					"query": [
+						{
+							"key": "SourceCustomerId",
+							"value": "source_-7777777"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Security Token REDIS Successful v3 (FD key)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const jsonData = pm.response.json();",
+							"pm.globals.set(\"security_token2\", jsonData.token);",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/token?SourceCustomerId=SOURCE_-748090994",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"token"
+					],
+					"query": [
+						{
+							"key": "SourceCustomerId",
+							"value": "SOURCE_-748090994"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Customer by Token REDIS",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"/*if (pm.response.code === 200) {",
+							"     pm.test(\"Customer Info is returned\", function () {",
+							"        pm.expect(pm.response.text()).to.include(\"isOptedIn\");",
+							"        pm.expect(pm.response.text()).to.include(\"pageLoadBeacon\");",
+							"        pm.expect(pm.response.text()).to.include(\"totalEarned\");",
+							"        pm.expect(pm.response.text()).to.include(\"showTransactionAds\")",
+							"        pm.expect(pm.response.text()).to.include(\"accounts\");",
+							"            pm.expect(pm.response.text()).to.include(\"accountId\");",
+							"            pm.expect(pm.response.text()).to.include(\"name\")",
+							"            pm.expect(pm.response.text()).to.include(\"isPrimary\");",
+							"            pm.expect(pm.response.text()).to.include(\"portfolioName\")",
+							"            pm.expect(pm.response.text()).to.include(\"portfolioId\");",
+							"        pm.expect(pm.response.text()).to.include(\"program\")",
+							"            pm.expect(pm.response.text()).to.include(\"currencyExchangeRate\")",
+							"            pm.expect(pm.response.text()).to.include(\"currencyUnit\")",
+							"            pm.expect(pm.response.text()).to.include(\"isCashAccount\")",
+							"            pm.expect(pm.response.text()).to.include(\"cultureName\")",
+							"            pm.expect(pm.response.text()).to.include(\"title\")",
+							"            pm.expect(pm.response.text()).to.include(\"name\")",
+							"            pm.expect(pm.response.text()).to.include(\"tagline\")",
+							"            pm.expect(pm.response.text()).to.include(\"description\")",
+							"",
+							"        });",
+							"        ",
+							"           /* Removed in 1.3",
+							"           pm.test(\"Value is in valid list\", () => {",
+							"      pm.expect(jsonData.accounts[0].accountId)",
+							"    .to.be.oneOf([-1102841322]);",
+							"     pm.expect(jsonData.accounts[1].accountId)",
+							"    .to.be.oneOf([-240603689]);",
+							"    pm.expect(jsonData.accounts[2].accountId)",
+							"    .to.be.oneOf([-55943765]);",
+							"});",
+							"",
+							"      ",
+							"",
+							"//Added in Version 1.2",
+							"pm.test(\"Verify the content-type header is in json format\", function () {",
+							"    pm.expect(postman.getResponseHeader(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"*/"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{security_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/Customers/{{security_token2}}",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Customers",
+						"{{security_token2}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start a REDIS Customer Session",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"/*if (pm.response.code === 200) {",
+							"     pm.test(\"Customer Info is returned\", function () {",
+							"        pm.expect(pm.response.text()).to.include(\"isOptedIn\");",
+							"        pm.expect(pm.response.text()).to.include(\"pageLoadBeacon\");",
+							"        pm.expect(pm.response.text()).to.include(\"totalEarned\");",
+							"        pm.expect(pm.response.text()).to.include(\"showTransactionAds\")",
+							"        pm.expect(pm.response.text()).to.include(\"accounts\");",
+							"            pm.expect(pm.response.text()).to.include(\"accountId\");",
+							"            pm.expect(pm.response.text()).to.include(\"name\")",
+							"            pm.expect(pm.response.text()).to.include(\"isPrimary\");",
+							"            pm.expect(pm.response.text()).to.include(\"portfolioName\")",
+							"            pm.expect(pm.response.text()).to.include(\"portfolioId\");",
+							"        pm.expect(pm.response.text()).to.include(\"program\")",
+							"            pm.expect(pm.response.text()).to.include(\"currencyExchangeRate\")",
+							"            pm.expect(pm.response.text()).to.include(\"currencyUnit\")",
+							"            pm.expect(pm.response.text()).to.include(\"isCashAccount\")",
+							"            pm.expect(pm.response.text()).to.include(\"cultureName\")",
+							"            pm.expect(pm.response.text()).to.include(\"title\")",
+							"            pm.expect(pm.response.text()).to.include(\"name\")",
+							"            pm.expect(pm.response.text()).to.include(\"tagline\")",
+							"            pm.expect(pm.response.text()).to.include(\"description\")",
+							"",
+							"        });",
+							"        ",
+							"           /* Removed in 1.3",
+							"           pm.test(\"Value is in valid list\", () => {",
+							"      pm.expect(jsonData.accounts[0].accountId)",
+							"    .to.be.oneOf([-1102841322]);",
+							"     pm.expect(jsonData.accounts[1].accountId)",
+							"    .to.be.oneOf([-240603689]);",
+							"    pm.expect(jsonData.accounts[2].accountId)",
+							"    .to.be.oneOf([-55943765]);",
+							"});",
+							"",
+							"      ",
+							"",
+							"//Added in Version 1.2",
+							"pm.test(\"Verify the content-type header is in json format\", function () {",
+							"    pm.expect(postman.getResponseHeader(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"*/"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{security_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/Customers/{{security_token2}}/Session?ChannelId=5",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Customers",
+						"{{security_token2}}",
+						"Session"
+					],
+					"query": [
+						{
+							"key": "ChannelId",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Enrollment Status for A REDIS Customer = False",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"optIn\": false\r\n}"
+				},
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/Customers/{{security_token2}}/Enrollment?ChannelId=5&LocationId=7",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Customers",
+						"{{security_token2}}",
+						"Enrollment"
+					],
+					"query": [
+						{
+							"key": "ChannelId",
+							"value": "5"
+						},
+						{
+							"key": "LocationId",
+							"value": "7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Enrollment Status for A REDIS Customer = True",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"optIn\": true\r\n}"
+				},
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/Customers/{{security_token2}}/Enrollment?ChannelId=5&LocationId=7",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Customers",
+						"{{security_token2}}",
+						"Enrollment"
+					],
+					"query": [
+						{
+							"key": "ChannelId",
+							"value": "5"
+						},
+						{
+							"key": "LocationId",
+							"value": "7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update REDIS Customer Preferences = false and 300",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{security_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"showTransactionAds\": false,\r\n  \"hideTransactionAdsDurationInSeconds\": 300\r\n}"
+				},
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/Customers/{{security_token2}}/Preferences",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Customers",
+						"{{security_token2}}",
+						"Preferences"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update REDIS Customer Preferences = true and 0",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"showTransactionAds\": true,\r\n  \"hideTransactionAdsDurationInSeconds\": 0\r\n}"
+				},
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/Customers/{{security_token2}}/Preferences",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Customers",
+						"{{security_token2}}",
+						"Preferences"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update the Primary Account of a REDIS Customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"//Added in Version 1.2.1",
+							"/*pm.test(\"Verify the content-length header is zero\", function () {",
+							"    pm.expect(postman.getResponseHeader(\"Content-Length\")).to.include(\"0\");",
+							"});*/",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{security_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"accountId\": 12203504\r\n}"
+				},
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/Customers/{{security_token2}}/Accounts/Primary",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Customers",
+						"{{security_token2}}",
+						"Accounts",
+						"Primary"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ads by customer  REDIS token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const jsonData = pm.response.json();",
+							"console.log(pm.response.json());",
+							"pm.environment.set('responseData', JSON.stringify(jsonData));",
+							"",
+							"pm.globals.set('ad_id', jsonData.ads[0].adId);",
+							"console.log(jsonData.ads[0].adId)",
+							"pm.globals.set('impression_token', jsonData.ads[0].creatives[0].impressionToken);",
+							"console.log(jsonData.ads[0].creatives[0].impressionToken)",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "`Accept-Encoding",
+						"type": "text",
+						"value": "application/gzip"
+					}
+				],
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/ads?&MaxAdLimit=64&ChannelId=1&LocationId=1&includeParked=false&status=63",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"ads"
+					],
+					"query": [
+						{
+							"key": null,
+							"value": null
+						},
+						{
+							"key": "MaxAdLimit",
+							"value": "64"
+						},
+						{
+							"key": "ChannelId",
+							"value": "1"
+						},
+						{
+							"key": "LocationId",
+							"value": "1"
+						},
+						{
+							"key": "includeParked",
+							"value": "false"
+						},
+						{
+							"key": "status",
+							"value": "63"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ads by REDIS customer token - filter by status (Postive Test)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const jsonData = pm.response.json();",
+							"console.log(pm.response.json());",
+							"pm.environment.set('responseData', JSON.stringify(jsonData));",
+							"",
+							"pm.globals.set('ad_id', jsonData.ads[0].adId);",
+							"console.log(jsonData.ads[0].adId)",
+							"pm.globals.set('impression_token', jsonData.ads[0].creatives[0].impressionToken);",
+							"console.log(jsonData.ads[0].creatives[0].impressionToken)",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "`Accept-Encoding",
+						"type": "text",
+						"value": "application/gzip"
+					}
+				],
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/ads?Status=16&MaxAdLimit=10&ChannelId=1&LocationId=1",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"ads"
+					],
+					"query": [
+						{
+							"key": "Status",
+							"value": "16"
+						},
+						{
+							"key": "MaxAdLimit",
+							"value": "10"
+						},
+						{
+							"key": "ChannelId",
+							"value": "1"
+						},
+						{
+							"key": "LocationId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ads by  REDIS customer token - filter by status (Negative Test)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//API call added Version 1.2.1",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const jsonData = pm.response.json();",
+							"console.log(pm.response.json());",
+							"pm.environment.set('responseData', JSON.stringify(jsonData));",
+							"",
+							"pm.globals.set('ad_id', jsonData.ads[0].adId);",
+							"console.log(jsonData.ads[0].adId)",
+							"pm.globals.set('impression_token', jsonData.ads[0].creatives[0].impressionToken);",
+							"console.log(jsonData.ads[0].creatives[0].impressionToken)",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "`Accept-Encoding",
+						"type": "text",
+						"value": "application/gzip"
+					}
+				],
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/ads?Status=16&MaxAdLimit=10&ChannelId=1&LocationId=1",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"ads"
+					],
+					"query": [
+						{
+							"key": "Status",
+							"value": "16"
+						},
+						{
+							"key": "MaxAdLimit",
+							"value": "10"
+						},
+						{
+							"key": "ChannelId",
+							"value": "1"
+						},
+						{
+							"key": "LocationId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All nearby REDIS merchant store locations for a specific customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//portal-geo-redis-intiitalizer must be deployed for this test to work",
+							"",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"if (pm.response.code === 200) {",
+							"const jsonData = pm.response.json();",
+							"console.log(pm.response.json());",
+							"pm.environment.set('responseData', JSON.stringify(jsonData));",
+							"var textData = pm.response.text();",
+							"",
+							"console.log(Object.keys(jsonData.merchantLocations).length);",
+							"console.log(\"Look above\");",
+							"",
+							"/*pm.test(\"merchantLocations Returned\", function () {",
+							"    pm.expect(pm.response.text()).to.not.include(\"[]\");",
+							"});*/",
+							"",
+							"//Added in version 1.2.1",
+							"pm.test(\"Merchant Locations Returned\", function () {",
+							"\tpm.expect(jsonData.merchantLocations.length).to.be.greaterThan(0);",
+							"});",
+							"",
+							"var allNearbyMerchantStoreLocationsSpecificCustomerSchema = ",
+							"",
+							"{",
+							"    \"$schema\": \"http://json-schema.org/draft-07/schema\",",
+							"    \"$id\": \"http://example.com/example.json\",",
+							"    \"type\": \"object\",",
+							"    \"title\": \"The root schema\",",
+							"    \"description\": \"The root schema comprises the entire JSON document.\",",
+							"    \"default\": {},",
+							"    \"examples\": [",
+							"        {",
+							"            \"merchantLocations\": [",
+							"                {",
+							"                    \"adId\": -408949949,",
+							"                    \"storeName\": \"deals zone -794357828\",",
+							"                    \"storeNumber\": \"store -794357828\",",
+							"                    \"address1\": \"Ponce city market\",",
+							"                    \"address2\": \"Atlanta\",",
+							"                    \"city\": \"Atlanta\",",
+							"                    \"county\": null,",
+							"                    \"state\": \"Georgia\",",
+							"                    \"postalCode\": \"12345\",",
+							"                    \"phone\": \"222-222-2222\",",
+							"                    \"hoursOfOperation\": \"9-5\",",
+							"                    \"latitude\": 34.11744560113756,",
+							"                    \"longitude\": -84.28915688285457,",
+							"                    \"distanceInMeters\": 3354",
+							"                },",
+							"                {",
+							"                    \"adId\": -1655471382,",
+							"                    \"storeName\": \"deals zone -377469884\",",
+							"                    \"storeNumber\": \"store -377469884\",",
+							"                    \"address1\": \"Ponce city market\",",
+							"                    \"address2\": \"Atlanta\",",
+							"                    \"city\": \"Atlanta\",",
+							"                    \"county\": null,",
+							"                    \"state\": \"Georgia\",",
+							"                    \"postalCode\": \"12345\",",
+							"                    \"phone\": \"222-222-2222\",",
+							"                    \"hoursOfOperation\": \"9-5\",",
+							"                    \"latitude\": 34.10123676245857,",
+							"                    \"longitude\": -84.35960213966075,",
+							"                    \"distanceInMeters\": 6431",
+							"                },",
+							"                {",
+							"                    \"adId\": -1740167568,",
+							"                    \"storeName\": \"deals zone -786864150\",",
+							"                    \"storeNumber\": \"store -786864150\",",
+							"                    \"address1\": \"Ponce city market\",",
+							"                    \"address2\": \"Atlanta\",",
+							"                    \"city\": \"Atlanta\",",
+							"                    \"county\": null,",
+							"                    \"state\": \"Georgia\",",
+							"                    \"postalCode\": \"12345\",",
+							"                    \"phone\": \"222-222-2222\",",
+							"                    \"hoursOfOperation\": \"9-5\",",
+							"                    \"latitude\": 34.17951620185492,",
+							"                    \"longitude\": -84.33141931084874,",
+							"                    \"distanceInMeters\": 10878",
+							"                },",
+							"                {",
+							"                    \"adId\": -1740167568,",
+							"                    \"storeName\": \"deals zone -1524312896\",",
+							"                    \"storeNumber\": \"store -1524312896\",",
+							"                    \"address1\": \"Ponce city market\",",
+							"                    \"address2\": \"Atlanta\",",
+							"                    \"city\": \"Atlanta\",",
+							"                    \"county\": null,",
+							"                    \"state\": \"Georgia\",",
+							"                    \"postalCode\": \"12345\",",
+							"                    \"phone\": \"222-222-2222\",",
+							"                    \"hoursOfOperation\": \"9-5\",",
+							"                    \"latitude\": 34.03304400429504,",
+							"                    \"longitude\": -84.4279001680089,",
+							"                    \"distanceInMeters\": 13920",
+							"                },",
+							"                {",
+							"                    \"adId\": -284907440,",
+							"                    \"storeName\": \"deals zone -1110920706\",",
+							"                    \"storeNumber\": \"store -1110920706\",",
+							"                    \"address1\": \"Ponce city market\",",
+							"                    \"address2\": \"Atlanta\",",
+							"                    \"city\": \"Atlanta\",",
+							"                    \"county\": null,",
+							"                    \"state\": \"Georgia\",",
+							"                    \"postalCode\": \"12345\",",
+							"                    \"phone\": \"222-222-2222\",",
+							"                    \"hoursOfOperation\": \"9-5\",",
+							"                    \"latitude\": 34.12555421142865,",
+							"                    \"longitude\": -84.47474142481686,",
+							"                    \"distanceInMeters\": 17374",
+							"                },",
+							"                {",
+							"                    \"adId\": -612437961,",
+							"                    \"storeName\": \"deals zone -1041923648\",",
+							"                    \"storeNumber\": \"store -1041923648\",",
+							"                    \"address1\": \"Ponce city market\",",
+							"                    \"address2\": \"Atlanta\",",
+							"                    \"city\": \"Atlanta\",",
+							"                    \"county\": null,",
+							"                    \"state\": \"Georgia\",",
+							"                    \"postalCode\": \"12345\",",
+							"                    \"phone\": \"222-222-2222\",",
+							"                    \"hoursOfOperation\": \"9-5\",",
+							"                    \"latitude\": 34.111341971888365,",
+							"                    \"longitude\": -84.48968003449839,",
+							"                    \"distanceInMeters\": 18418",
+							"                },",
+							"                {",
+							"                    \"adId\": -408949949,",
+							"                    \"storeName\": \"deals zone -1485141154\",",
+							"                    \"storeNumber\": \"store -1485141154\",",
+							"                    \"address1\": \"Ponce city market\",",
+							"                    \"address2\": \"Atlanta\",",
+							"                    \"city\": \"Atlanta\",",
+							"                    \"county\": null,",
+							"                    \"state\": \"Georgia\",",
+							"                    \"postalCode\": \"12345\",",
+							"                    \"phone\": \"222-222-2222\",",
+							"                    \"hoursOfOperation\": \"9-5\",",
+							"                    \"latitude\": 33.946144692041514,",
+							"                    \"longitude\": -84.15204517799417,",
+							"                    \"distanceInMeters\": 20317",
+							"                }",
+							"            ]",
+							"        }",
+							"    ],",
+							"    \"required\": [",
+							"        \"merchantLocations\"",
+							"    ],",
+							"    \"properties\": {",
+							"        \"merchantLocations\": {",
+							"            \"$id\": \"#/properties/merchantLocations\",",
+							"            \"type\": \"array\",",
+							"            \"title\": \"The merchantLocations schema\",",
+							"            \"description\": \"An explanation about the purpose of this instance.\",",
+							"            \"default\": [],",
+							"            \"examples\": [",
+							"                [",
+							"                    {",
+							"                        \"adId\": -408949949,",
+							"                        \"storeName\": \"deals zone -794357828\",",
+							"                        \"storeNumber\": \"store -794357828\",",
+							"                        \"address1\": \"Ponce city market\",",
+							"                        \"address2\": \"Atlanta\",",
+							"                        \"city\": \"Atlanta\",",
+							"                        \"county\": null,",
+							"                        \"state\": \"Georgia\",",
+							"                        \"postalCode\": \"12345\",",
+							"                        \"phone\": \"222-222-2222\",",
+							"                        \"hoursOfOperation\": \"9-5\",",
+							"                        \"latitude\": 34.11744560113756,",
+							"                        \"longitude\": -84.28915688285457,",
+							"                        \"distanceInMeters\": 3354",
+							"                    },",
+							"                    {",
+							"                        \"adId\": -1655471382,",
+							"                        \"storeName\": \"deals zone -377469884\",",
+							"                        \"storeNumber\": \"store -377469884\",",
+							"                        \"address1\": \"Ponce city market\",",
+							"                        \"address2\": \"Atlanta\",",
+							"                        \"city\": \"Atlanta\",",
+							"                        \"county\": null,",
+							"                        \"state\": \"Georgia\",",
+							"                        \"postalCode\": \"12345\",",
+							"                        \"phone\": \"222-222-2222\",",
+							"                        \"hoursOfOperation\": \"9-5\",",
+							"                        \"latitude\": 34.10123676245857,",
+							"                        \"longitude\": -84.35960213966075,",
+							"                        \"distanceInMeters\": 6431",
+							"                    }",
+							"                ]",
+							"            ],",
+							"            \"additionalItems\": true,",
+							"            \"items\": {",
+							"                \"$id\": \"#/properties/merchantLocations/items\",",
+							"                \"anyOf\": [",
+							"                    {",
+							"                        \"$id\": \"#/properties/merchantLocations/items/anyOf/0\",",
+							"                        \"type\": \"object\",",
+							"                        \"title\": \"The first anyOf schema\",",
+							"                        \"description\": \"An explanation about the purpose of this instance.\",",
+							"                        \"default\": {},",
+							"                        \"examples\": [",
+							"                            {",
+							"                                \"adId\": -408949949,",
+							"                                \"storeName\": \"deals zone -794357828\",",
+							"                                \"storeNumber\": \"store -794357828\",",
+							"                                \"address1\": \"Ponce city market\",",
+							"                                \"address2\": \"Atlanta\",",
+							"                                \"city\": \"Atlanta\",",
+							"                                \"county\": null,",
+							"                                \"state\": \"Georgia\",",
+							"                                \"postalCode\": \"12345\",",
+							"                                \"phone\": \"222-222-2222\",",
+							"                                \"hoursOfOperation\": \"9-5\",",
+							"                                \"latitude\": 34.11744560113756,",
+							"                                \"longitude\": -84.28915688285457,",
+							"                                \"distanceInMeters\": 3354",
+							"                            }",
+							"                        ],",
+							"                        \"required\": [",
+							"                            \"adId\",",
+							"                            \"storeName\",",
+							"                            \"storeNumber\",",
+							"                            \"address1\",",
+							"                            \"address2\",",
+							"                            \"city\",",
+							"                            \"county\",",
+							"                            \"state\",",
+							"                            \"postalCode\",",
+							"                            \"phone\",",
+							"                            \"hoursOfOperation\",",
+							"                            \"latitude\",",
+							"                            \"longitude\",",
+							"                            \"distanceInMeters\"",
+							"                        ],",
+							"                        \"properties\": {",
+							"                            \"adId\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/adId\",",
+							"                                \"type\": \"integer\",",
+							"                                \"title\": \"The adId schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": 0,",
+							"                                \"examples\": [",
+							"                                    -408949949",
+							"                                ]",
+							"                            },",
+							"                            \"storeName\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/storeName\",",
+							"                                \"type\": \"string\",",
+							"                                \"title\": \"The storeName schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": \"\",",
+							"                                \"examples\": [",
+							"                                    \"deals zone -794357828\"",
+							"                                ]",
+							"                            },",
+							"                            \"storeNumber\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/storeNumber\",",
+							"                                \"type\": \"string\",",
+							"                                \"title\": \"The storeNumber schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": \"\",",
+							"                                \"examples\": [",
+							"                                    \"store -794357828\"",
+							"                                ]",
+							"                            },",
+							"                            \"address1\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/address1\",",
+							"                                \"type\": \"string\",",
+							"                                \"title\": \"The address1 schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": \"\",",
+							"                                \"examples\": [",
+							"                                    \"Ponce city market\"",
+							"                                ]",
+							"                            },",
+							"                            \"address2\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/address2\",",
+							"                                \"type\": \"string\",",
+							"                                \"title\": \"The address2 schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": \"\",",
+							"                                \"examples\": [",
+							"                                    \"Atlanta\"",
+							"                                ]",
+							"                            },",
+							"                            \"city\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/city\",",
+							"                                \"type\": \"string\",",
+							"                                \"title\": \"The city schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": \"\",",
+							"                                \"examples\": [",
+							"                                    \"Atlanta\"",
+							"                                ]",
+							"                            },",
+							"                            \"county\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/county\",",
+							"                                \"type\": \"null\",",
+							"                                \"title\": \"The county schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": null,",
+							"                                \"examples\": [",
+							"                                    null",
+							"                                ]",
+							"                            },",
+							"                            \"state\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/state\",",
+							"                                \"type\": \"string\",",
+							"                                \"title\": \"The state schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": \"\",",
+							"                                \"examples\": [",
+							"                                    \"Georgia\"",
+							"                                ]",
+							"                            },",
+							"                            \"postalCode\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/postalCode\",",
+							"                                \"type\": \"string\",",
+							"                                \"title\": \"The postalCode schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": \"\",",
+							"                                \"examples\": [",
+							"                                    \"12345\"",
+							"                                ]",
+							"                            },",
+							"                            \"phone\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/phone\",",
+							"                                \"type\": \"string\",",
+							"                                \"title\": \"The phone schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": \"\",",
+							"                                \"examples\": [",
+							"                                    \"222-222-2222\"",
+							"                                ]",
+							"                            },",
+							"                            \"hoursOfOperation\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/hoursOfOperation\",",
+							"                                \"type\": \"string\",",
+							"                                \"title\": \"The hoursOfOperation schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": \"\",",
+							"                                \"examples\": [",
+							"                                    \"9-5\"",
+							"                                ]",
+							"                            },",
+							"                            \"latitude\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/latitude\",",
+							"                                \"type\": \"number\",",
+							"                                \"title\": \"The latitude schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": 0.0,",
+							"                                \"examples\": [",
+							"                                    34.11744560113756",
+							"                                ]",
+							"                            },",
+							"                            \"longitude\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/longitude\",",
+							"                                \"type\": \"number\",",
+							"                                \"title\": \"The longitude schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": 0.0,",
+							"                                \"examples\": [",
+							"                                    -84.28915688285457",
+							"                                ]",
+							"                            },",
+							"                            \"distanceInMeters\": {",
+							"                                \"$id\": \"#/properties/merchantLocations/items/anyOf/0/properties/distanceInMeters\",",
+							"                                \"type\": \"integer\",",
+							"                                \"title\": \"The distanceInMeters schema\",",
+							"                                \"description\": \"An explanation about the purpose of this instance.\",",
+							"                                \"default\": 0,",
+							"                                \"examples\": [",
+							"                                    3354",
+							"                                ]",
+							"                            }",
+							"                        },",
+							"                        \"additionalProperties\": true",
+							"                    }",
+							"                ]",
+							"            }",
+							"        }",
+							"    },",
+							"    \"additionalProperties\": true",
+							"}",
+							"",
+							"",
+							"   pm.test('Schema is valid', function() {",
+							"  pm.expect(tv4.validate(JSON.parse(pm.response.text()), allNearbyMerchantStoreLocationsSpecificCustomerSchema)).to.be.true;",
+							"     });",
+							"     ",
+							"//Added in Version 1.2",
+							"if (Object.keys(jsonData.merchantLocations).length === 7 ) {",
+							"",
+							"",
+							"}",
+							"else{",
+							" console.log(\"INCORRECT NUMBER OF LOCATIONS RETURNED\");",
+							"}",
+							"",
+							"    //Added in Version 1.2",
+							"pm.test(\"Verify the content-type header is in json format\", function () {",
+							"    pm.expect(postman.getResponseHeader(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"}",
+							"else {",
+							"    postman.setNextRequest('Nearby merchant store locations for a specific ad (10133536) for a specific customer (AUTO_4142406)')",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/merchants/latitude/34.087373/longitude/-84.291816/radius/1999999999?maxMerchantLimit=99&ChannelId=1&LocationId=1",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"merchants",
+						"latitude",
+						"34.087373",
+						"longitude",
+						"-84.291816",
+						"radius",
+						"1999999999"
+					],
+					"query": [
+						{
+							"key": "maxMerchantLimit",
+							"value": "99"
+						},
+						{
+							"key": "ChannelId",
+							"value": "1"
+						},
+						{
+							"key": "LocationId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Nearby REDIS merchant store locations for a specific ad",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//portal-geo-redis-intiitalizer must be deployed for this test to work",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"if (pm.response.code ===200) {",
+							"",
+							"const jsonData = pm.response.json();",
+							"console.log(pm.response.json());",
+							"pm.environment.set('responseData', JSON.stringify(jsonData));",
+							"var textData = pm.response.text();",
+							"",
+							"console.log(Object.keys(jsonData.merchantLocations).length);",
+							"",
+							"",
+							"/*pm.test(\"merchantLocations Returned\", function () {",
+							"    pm.expect(pm.response.text()).to.not.include(\"[]\");",
+							"});*/",
+							"",
+							"//Added in version 1.2.1",
+							"pm.test(\"merchantLocations Returned\", function () {",
+							"\tpm.expect(jsonData.merchantLocations.length).to.be.greaterThan(0);",
+							"});",
+							"",
+							"",
+							"",
+							"",
+							"    ",
+							"//Added in Version 1.2",
+							"pm.test(\"Verify the content-type header is in json format\", function () {",
+							"    pm.expect(postman.getResponseHeader(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"}",
+							"else",
+							"{",
+							"     postman.setNextRequest('Log Client Event')",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/ads/{{ad_id}}/merchants/latitude/34.087373/longitude/-84.291816/radius/1999999999?maxMerchantLimit=3&ChannelId=1&LocationId=1\n",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"ads",
+						"{{ad_id}}",
+						"merchants",
+						"latitude",
+						"34.087373",
+						"longitude",
+						"-84.291816",
+						"radius",
+						"1999999999"
+					],
+					"query": [
+						{
+							"key": "maxMerchantLimit",
+							"value": "3"
+						},
+						{
+							"key": "ChannelId",
+							"value": "1"
+						},
+						{
+							"key": "LocationId",
+							"value": "1\n"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reward summary totals by REDIS customer token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const jsonData = pm.response.json();",
+							"console.log(pm.response.json());",
+							"pm.environment.set('responseData', JSON.stringify(jsonData));",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/rewards?ChannelId=1&LocationId=1",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"rewards"
+					],
+					"query": [
+						{
+							"key": "ChannelId",
+							"value": "1"
+						},
+						{
+							"key": "LocationId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Park a list of ads for a valid REDIS customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//impression tokens now hardcoded as variable {{impression_token}} is no longer being applied for some reason",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"console.log(\"impression_token\");",
+							"console.log(\"impression_token1\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ads\" : [\r\n        {\r\n            \"impressionToken\" : \"{{impression_token2}}\",\r\n            \"channelId\" : 9,\r\n            \"locationId\" : 8,\r\n            \"displayTypeId\" : 7,\r\n            \"groupId\" : 99,\r\n            \"groupTypeId\" : 100,\r\n            \"adPostion\" : 101\r\n        }\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/ads/parked",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"ads",
+						"parked"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unpark a list of ads for a valid REDIS customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//impression tokens now hardcoded as variable {{impression_token}} is no longer being applied for some reason",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ads\" : [\r\n        {\r\n            \"impressionToken\" : \"CNPvvof6_____wEoATAB\",\r\n            \"channelId\" : 1,\r\n            \"locationId\" : 1,\r\n            \"displayTypeId\" : 1\r\n        }\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/ads/unparked",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"ads",
+						"unparked"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gets the counts of a REDIS customer's ads in various states",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const jsonData = pm.response.json();",
+							"console.log(pm.response.json());",
+							"pm.environment.set('responseData', JSON.stringify(jsonData));",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{security_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/adcounts",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"adcounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gets the count of a REDIS customer's ads in various states (Parked Ads only)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const jsonData = pm.response.json();",
+							"console.log(pm.response.json());",
+							"pm.environment.set('responseData', JSON.stringify(jsonData));",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/adcount?Status=63&IncludeParked=true",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"adcount"
+					],
+					"query": [
+						{
+							"key": "Status",
+							"value": "63"
+						},
+						{
+							"key": "IncludeParked",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Marks a collection of Remote authentication ads as served version 2.x",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{security_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"tokens\": [\r\n   \"Oxqc0e_pPy0ZsHPpLZEnsH8o2Fdp-D3tbfW4C8T8AFE\",\r\n   \"Y3DXnU8NUK14ZgpIVUp-K8PmFaaSQUiPev2S51YEswg\",\r\n   \"PwkxWLh1c8E5zQgUR6yKBBZAqXc0BVg7mlqCRovJkrE\"\r\n ],\r\n \"channelId\": 1,\r\n \"locationId\": 2,\r\n \"displayTypeId\": 6\r\n}\r\n  ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/remote-authentication/serves",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"remote-authentication",
+						"serves"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Marks a collection of ads as served for a valid REDIS customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Verify the content-length header is zero\", function () {",
+							"    pm.expect(postman.getResponseHeader(\"Content-Length\")).to.include(\"0\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{security_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Ads\": [\r\n    {\r\n      \"impressionToken\": \"{{impression_token2}}\",\r\n      \"channelId\": 2,\r\n      \"locationId\": 3,\r\n      \"displayTypeId\": 4\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/ads/served",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"ads",
+						"served"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Marks a collection of ads as active for a valid  REDIS customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{security_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Ads\": [\r\n    {\r\n      \"impressionToken\": \"{{impression_token2}}\",\r\n      \"channelId\": 6,\r\n      \"locationId\": 7,\r\n      \"displayTypeId\": 8\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{api_endpoint}}/api/v1/customers/{{security_token2}}/ads/active",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"customers",
+						"{{security_token2}}",
+						"ads",
+						"active"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ads Service health check",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"api_endpoint\", \"localhost\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ops-portal-qa.cl.local/health/ads",
+					"protocol": "http",
+					"host": [
+						"ops-portal-qa",
+						"cl",
+						"local"
+					],
+					"path": [
+						"health",
+						"ads"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Customer Service health check",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"api_endpoint\", \"localhost\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ops-portal-qa.cl.local/health/customer",
+					"protocol": "http",
+					"host": [
+						"ops-portal-qa",
+						"cl",
+						"local"
+					],
+					"path": [
+						"health",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Security Service health check Copy",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"api_endpoint\", \"localhost\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ops-portal-qa.cl.local/health/security",
+					"protocol": "http",
+					"host": [
+						"ops-portal-qa",
+						"cl",
+						"local"
+					],
+					"path": [
+						"health",
+						"security"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Events Service health check",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"api_endpoint\", \"localhost\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Default Backend since Service is unavailable\", function () {",
+							"    pm.response.to.have.body(\"default backend - 404\");",
+							"});",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ops-portal-qa.cl.local/health/events",
+					"protocol": "http",
+					"host": [
+						"ops-portal-qa",
+						"cl",
+						"local"
+					],
+					"path": [
+						"health",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Extended Security Service health check",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{api_endpoint}}/health/extendedsecurity",
+					"protocol": "http",
+					"host": [
+						"{{api_endpoint}}"
+					],
+					"path": [
+						"health",
+						"extendedsecurity"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gets all known bank configurations",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://collections-management-qa.cardlytics.com/api/v1/BankConfiguration",
+					"protocol": "https",
+					"host": [
+						"collections-management-qa",
+						"cardlytics",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"BankConfiguration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gets configuration for a specific bank.",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://collections-management-qa.cardlytics.com/api/v1/BankConfiguration/institutions/2021",
+					"protocol": "https",
+					"host": [
+						"collections-management-qa",
+						"cardlytics",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"BankConfiguration",
+						"institutions",
+						"2021"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gets AdCatalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ops-portal-qa.cl.local/api/v1/AdCatalog",
+					"protocol": "http",
+					"host": [
+						"ops-portal-qa",
+						"cl",
+						"local"
+					],
+					"path": [
+						"api",
+						"v1",
+						"AdCatalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gets AdCatalog AdId Array",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ops-portal-qa.cl.local/api/v1/AdCatalog?AdIds=-1346059299&AdIds=-187465424&AdIds=-744708661&AdIds=-1229085801&AdIds=-126156941&AdIds=-516816786",
+					"protocol": "http",
+					"host": [
+						"ops-portal-qa",
+						"cl",
+						"local"
+					],
+					"path": [
+						"api",
+						"v1",
+						"AdCatalog"
+					],
+					"query": [
+						{
+							"key": "AdIds",
+							"value": "-1346059299"
+						},
+						{
+							"key": "AdIds",
+							"value": "-187465424"
+						},
+						{
+							"key": "AdIds",
+							"value": "-744708661"
+						},
+						{
+							"key": "AdIds",
+							"value": "-1229085801"
+						},
+						{
+							"key": "AdIds",
+							"value": "-126156941"
+						},
+						{
+							"key": "AdIds",
+							"value": "-516816786"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gets all security tokens along with the unfiltered ads for the requested source customer ids",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"sourceCustomerIds\": [\r\n    \"SOURCE_-1876326415\",\r\n    \"SOURCE_-66138362\",\r\n    \"SOURCE_-1195795815\",\r\n    \"SOURCE_-730216688\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://ops-portal-qa.cl.local/api/v1/TokensAndUnfilteredAds",
+					"protocol": "https",
+					"host": [
+						"ops-portal-qa",
+						"cl",
+						"local"
+					],
+					"path": [
+						"api",
+						"v1",
+						"TokensAndUnfilteredAds"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.globals.set(\"api_endpoint\", \"ops-portal-qa.cl.local\");"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
